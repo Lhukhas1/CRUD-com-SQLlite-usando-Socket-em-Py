@@ -1,0 +1,70 @@
+
+Aluno: Lucas Severino da Silva 
+
+
+CREATE -> C
+
+Cliente -> Servidor
+Chama a função escolhaC() que:
+Pede o código, nome da disciplina, nome do professor, quantidade de alunos, carga horária, média da turma
+então converte a mensagem no formato: 
+[opcode + tam_codigo + codigo + tam_disciplina + nomeDisciplina + tam_professor + nomeProfessor + quantAlunos + cargaHoraria + mediaTurma]
+E envia para o servidor
+
+Servidor -> Cliente/Banco
+Decodifica a mensagem recebida, converte a media para float denovo e adiciona no banco, enviando para o Cliente T se for sucesso e F para erro porem codificado, no cliente ele decodifica e imprime o sucesso ou não
+
+
+
+READ -> R ou L
+
+Opção 1 - Listar Todos  -> L
+Cliente -> Servidor
+Codifica apenas o opcode -> L e envia para o servidor
+Servidor -> Cliente
+Decodifica apenas o opcode e chama o listar todos do banco se encontrar envia o T codificado se não encontrou envia -> F, codifica a quantidade de registros e envia para o cliente e para cada registro codifica e envia:
+[tam_codigo + codigo + tam_disciplina + nomeDisciplina + tam_professor + nomeProfessor + quantAlunos + cargaHoraria + mediaTurma]
+
+No Cliente 
+Recebe confirmação T ou F, se for o T chama processarR que decodifica a mensagem e imprime 
+
+
+Opção 2 - Buscar por Código -> R
+Cliente -> Servidor
+Chama escolhaR() solicita o codigo codifica e envia  no formato: [opcode + tam_codigo + codigo]
+e envia para o servidor
+
+Servidor -> Cliente/Banco
+Decodifica a mensagem e extrai o código e chama buscar no banco com o código a se buscar se encontrar envia o T se nao F
+codifica o retorno do banco e formata para 
+[tam_codigo + codigo + tam_disciplina + nomeDisciplina + tam_professor + nomeProfessor + quantAlunos + cargaHoraria + mediaTurma]
+envia pro cliente 
+
+No Cliente 
+Recebe confirmação T ou F se for T chama processaR e decodifica e imprime as informações
+
+UPDATE -> U
+
+Cliente -> Servidor
+Chama escolhaU que pede o codigo da diciplina que deseja atualizar e todos os paramentros denovo codifica para o formato
+[opcode + tam_codigo_antigo + codigo_antigo + tam_codigo_novo + codigo_novo + tam_disciplina + nomeDisciplina + tam_professor + nomeProfessor + quantAlunos + cargaHoraria + mediaTurma]
+e envia para o servidor
+
+Servidor -> Cliente/Banco
+Decodifica os campos da mensagem e chama a função update com o código antigo e os novos parametros  envia T se atualizou e F se não achou nada para atualizar
+
+DELETE -> D
+Cliente -> Servidor
+Chama escolhaD que pega o código da disciplina para deletar
+codifica e envia no formato
+[opcode + tam_codigo + codigo]
+e envia para o servidor
+
+Servidor ->  Cliente/Banco
+Decodifica a mensagem chama a função remover do banco, retorna T se removeu ou F se não removeu
+
+
+Banco de Dados
+tabela -> teste
+Campos: codigo (PRIMARY KEY), nomeDisciplina, nomeProfessor, quantidadeAlunos, cargaHoraria, mediaTurma
+
